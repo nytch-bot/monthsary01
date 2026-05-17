@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Happy 1st Monthsary 💙</title>
+  <link rel="stylesheet" href="style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
+</head>
+<body>
+
+  <!-- Animated background particles -->
+  <div class="bg-particles" id="bgParticles"></div>
+
+  <!-- Floating hearts -->
+  <div class="floating-hearts" id="floatingHearts"></div>
+
+  <!-- Main card -->
+  <main class="card" id="card">
+    <div class="card-inner">
+
+      <!-- Badge -->
+      <div class="badge">✦ 1 Month Together ✦</div>
+
+      <!-- Her photo zone — just swap img/main.jpg with your real photo -->
+      <div class="photo-zone" id="photoZone">
+        <div class="photo-ring">
+          <!-- ✏️  Replace img/main.jpg with your photo -->
+          <img
+            src="img/main.jpg"
+            alt="Our photo"
+            class="photo-preview"
+            onerror="this.style.display='none';document.getElementById('photoFallback').style.display='flex';"
+          />
+          <div class="photo-placeholder" id="photoFallback" style="display:none;">
+            <div class="upload-icon">🌙</div>
+            <p class="upload-hint">Add img/main.jpg</p>
+          </div>
+        </div>
+        <div class="photo-halo"></div>
+      </div>
+
+      <!-- Title -->
+      <h1 class="title">Happy<br/><em>1st Monthsary</em></h1>
+
+      <!-- Divider -->
+      <div class="divider"><span class="star-icon">✦</span></div>
+
+      <!-- Typewriter message -->
+      <p class="message" id="message"></p>
+
+      <!-- Counters -->
+      <div class="counter-wrap">
+        <div class="counter-box">
+          <span class="counter-num" id="days">30</span>
+          <span class="counter-label">Days</span>
+        </div>
+
+        <div class="counter-box memories-box" id="memoriesBox">
+          <span class="counter-num memories-icon">📷</span>
+          <span class="counter-label">Memories</span>
+        </div>
+
+        <div class="counter-box zodiac-box" id="zodiacBox" style="cursor:pointer;">
+          <span class="counter-num zodiac-signs">♒ ♏</span>
+          <span class="counter-label">Written in Stars</span>
+        </div>
+      </div>
+
+      <!-- CTA button -->
+      <button class="love-btn" id="gameBtn">Play Games with Me 🎮</button>
+
+      <!-- Sparks -->
+      <div class="sparks" id="sparks"></div>
+
+    </div>
+  </main>
+
+  <!-- ── LOVE POPUP ── -->
+  <div class="popup" id="popup">
+    <div class="popup-content">
+      <div class="popup-icon">💙</div>
+      <p>I love you to the moon and back!</p>
+      <button class="close-btn" id="closeBtn">Aww, thanks! 🥰</button>
+    </div>
+  </div>
+
+  <!-- ── THEATER MODAL ── -->
+  <div class="theater" id="theater">
+    <div class="theater-inner">
+
+      <div class="theater-header">
+        <span class="theater-title">🎞 Our Memories</span>
+        <button class="theater-close" id="theaterClose">✕</button>
+      </div>
+
+      <!-- Viewer screen -->
+      <div class="theater-viewer" id="theaterViewer">
+        <!-- ✏️  First memory auto-loads here -->
+        <img src="" alt="" class="viewer-img" id="viewerImg" />
+      </div>
+
+      <p class="theater-caption" id="theaterCaption">Our little moments 💙</p>
+
+      <!-- Thumbnail strip — populated by JS from MEMORIES array in script.js -->
+      <div class="memory-strip" id="memoryStrip"></div>
+
+    </div>
+  </div>
+
+  <!-- ── ZODIAC LOVE POPUP ── -->
+  <div class="zodiac-popup" id="zodiacPopup">
+    <div class="zp-shooting-stars" id="zpShootingStars"></div>
+    <div class="zp-content">
+      <button class="zp-close" id="zpClose">✕</button>
+
+      <div class="zp-stars-row">
+        <span class="zp-zodiac-icon">♒</span>
+        <div class="zp-star-cluster">
+          <span>✦</span><span>✧</span><span>✦</span>
+        </div>
+        <span class="zp-zodiac-icon">♏</span>
+      </div>
+
+      <div class="zp-message-box">
+        <p class="zp-love-text" id="zpLoveText"></p>
+      </div>
+
+      <div class="zp-divider"><span>✦</span></div>
+
+      <button class="zp-flower-btn" id="zpFlowerBtn">
+        <span class="zp-flower-icon">🌷</span>
+        <span>Flowers for you</span>
+        <span class="zp-flower-icon">🌷</span>
+      </button>
+
+      <div class="zp-tulip-garden" id="zpTulipGarden"></div>
+    </div>
+  </div>
+
+  <!-- ── game.html opens in new tab ── -->
+
+  <script src="script.js"></script>
+  <script>
+    /* Open game in new tab */
+    document.getElementById('gameBtn').addEventListener('click', function() {
+      window.open('game.html', '_blank');
+    });
+  </script>
+
+  <!-- ── MUSIC PLAYER ── -->
+  <!-- Injected lazily on first interaction to bypass autoplay block -->
+
+  <!-- Mute / Unmute toggle -->
+  <button id="musicToggle" title="Toggle music" aria-label="Toggle music">
+    🎵
+  </button>
+
+  <style>
+    #musicToggle {
+      position: fixed;
+      bottom: 22px; right: 22px;
+      z-index: 9999;
+      width: 44px; height: 44px;
+      border-radius: 50%;
+      border: 1.5px solid rgba(107,159,255,0.5);
+      background: rgba(255,255,255,0.82);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      font-size: 1.15rem;
+      cursor: pointer;
+      box-shadow: 0 4px 18px rgba(58,111,216,0.25);
+      display: flex; align-items: center; justify-content: center;
+      transition: transform 0.22s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.18s;
+      animation: popIn 0.6s 0.8s cubic-bezier(0.34,1.56,0.64,1) both;
+    }
+    #musicToggle:hover {
+      transform: scale(1.12);
+      box-shadow: 0 8px 28px rgba(58,111,216,0.35);
+    }
+    #musicToggle.muted { opacity: 0.5; }
+  </style>
+
+  <script>
+  /* ── MUSIC: lazy-inject iframe on first user gesture ── */
+  (function() {
+    const YT_BASE = 'https://www.youtube.com/embed/MaUKP1CryC0?loop=1&playlist=MaUKP1CryC0&controls=0&disablekb=1&fs=0&modestbranding=1&autoplay=1';
+    const btn = document.getElementById('musicToggle');
+    let frame = null;
+    let muted = false;
+    let started = false;
+
+    function injectMusic() {
+      if (started) return;
+      started = true;
+      frame = document.createElement('iframe');
+      frame.id = 'yt-music';
+      frame.allow = 'autoplay; encrypted-media';
+      frame.style.cssText = 'position:fixed;width:1px;height:1px;bottom:0;left:0;opacity:0;pointer-events:none;border:none;';
+      frame.src = YT_BASE + '&mute=0';
+      document.body.appendChild(frame);
+    }
+
+    /* Start music on the very first touch/click anywhere on the page */
+    function firstGesture() {
+      injectMusic();
+      document.removeEventListener('click', firstGesture);
+      document.removeEventListener('touchstart', firstGesture);
+    }
+    document.addEventListener('click', firstGesture);
+    document.addEventListener('touchstart', firstGesture);
+
+    /* Mute / Unmute toggle */
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation(); /* don't double-trigger firstGesture */
+      injectMusic();       /* ensure it's started if somehow not yet */
+      muted = !muted;
+      if (frame) frame.src = YT_BASE + '&mute=' + (muted ? '1' : '0');
+      btn.textContent = muted ? '🔇' : '🎵';
+      btn.classList.toggle('muted', muted);
+    });
+  })();
+  </script>
+</body>
+</html>
