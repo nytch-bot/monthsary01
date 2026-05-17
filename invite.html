@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>A Little Surprise for You 💙</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --blue-pale:  #e8f0ff;
+      --blue-light: #b8d0ff;
+      --blue-mid:   #6b9fff;
+      --blue-deep:  #3a6fd8;
+      --blue-dark:  #1a3a8f;
+      --navy:       #0d1f5c;
+      --white:      #ffffff;
+      --shadow:     rgba(58,111,216,0.28);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { width: 100%; height: 100%; overflow: hidden; }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background:
+        radial-gradient(ellipse 70% 50% at 15% 10%, rgba(100,150,255,0.5) 0%, transparent 55%),
+        radial-gradient(ellipse 60% 45% at 85% 90%, rgba(60,100,220,0.4) 0%, transparent 55%),
+        linear-gradient(160deg, #c8daff 0%, #b0c8ff 30%, #a8bfff 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+    }
+
+    /* ── PARTICLES ── */
+    #particles {
+      position: fixed; inset: 0;
+      pointer-events: none; z-index: 0; overflow: hidden;
+    }
+    .pt {
+      position: absolute;
+      border-radius: 50%;
+      opacity: 0;
+      animation: ptFloat linear infinite;
+    }
+    .st {
+      position: absolute;
+      opacity: 0;
+      user-select: none;
+      animation: stDrift linear infinite;
+    }
+    @keyframes ptFloat {
+      0%   { transform: translateY(0) scale(1);        opacity: 0; }
+      10%  { opacity: 0.7; }
+      85%  { opacity: 0.4; }
+      100% { transform: translateY(-110vh) scale(0.5); opacity: 0; }
+    }
+    @keyframes stDrift {
+      0%   { transform: translateY(0) rotate(0deg);        opacity: 0; }
+      10%  { opacity: 0.8; }
+      80%  { opacity: 0.3; }
+      100% { transform: translateY(-110vh) rotate(360deg); opacity: 0; }
+    }
+
+    /* ── SHOOTING STARS ── */
+    .shoot {
+      position: fixed;
+      height: 1.5px;
+      border-radius: 2px;
+      background: linear-gradient(to right, rgba(255,255,255,0), rgba(200,225,255,1), rgba(255,255,255,0.2));
+      pointer-events: none;
+      opacity: 0;
+      animation: shootAnim linear forwards;
+    }
+    @keyframes shootAnim {
+      0%   { opacity: 0; transform: translate(0,0); }
+      8%   { opacity: 1; }
+      100% { opacity: 0; transform: translate(200px, 100px); }
+    }
+
+    /* ── SCENE ── */
+    #scene {
+      position: relative; z-index: 10;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      width: 100%; padding: 20px;
+    }
+
+    /* ── HINT TEXT ── */
+    #hint {
+      font-family: 'Playfair Display', Georgia, serif;
+      font-style: italic;
+      font-size: clamp(0.85rem, 3vw, 1rem);
+      color: var(--blue-dark);
+      opacity: 0;
+      margin-bottom: 28px;
+      letter-spacing: 0.03em;
+      animation: fadeInUp 1s 0.8s ease both;
+    }
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(12px); }
+      to   { opacity: 0.75; transform: translateY(0); }
+    }
+
+    /* ══════════════════════════════════
+       ENVELOPE
+    ══════════════════════════════════ */
+    #envelope-wrap {
+      cursor: pointer;
+      position: relative;
+      animation: floatCard 4s ease-in-out infinite;
+      filter: drop-shadow(0 24px 48px rgba(58,111,216,0.35));
+    }
+    @keyframes floatCard {
+      0%,100% { transform: translateY(0); }
+      50%      { transform: translateY(-10px); }
+    }
+
+    #envelope-wrap.opening {
+      animation: none;
+      pointer-events: none;
+    }
+
+    /* Envelope body */
+    .env-body {
+      width: clamp(280px, 80vw, 400px);
+      height: clamp(195px, 55vw, 280px);
+      background: linear-gradient(160deg, #dce9ff 0%, #c4d8ff 60%, #b0c8ff 100%);
+      border-radius: 8px 8px 18px 18px;
+      position: relative;
+      overflow: hidden;
+      border: 1.5px solid rgba(107,159,255,0.4);
+    }
+
+    /* Inner card visible inside envelope */
+    .env-inner-card {
+      position: absolute;
+      bottom: 0; left: 50%;
+      transform: translateX(-50%);
+      width: 85%; height: 90%;
+      background: rgba(255,255,255,0.92);
+      border-radius: 12px 12px 0 0;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      padding: 16px 12px;
+      border: 1px solid rgba(184,208,255,0.8);
+      transition: transform 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    .env-inner-card .ic-badge {
+      font-size: 0.6rem; font-weight: 700;
+      letter-spacing: 0.18em; text-transform: uppercase;
+      color: var(--blue-deep);
+      margin-bottom: 8px;
+      opacity: 0.75;
+    }
+    .env-inner-card .ic-heart { font-size: 1.6rem; margin-bottom: 2px; }
+    .env-inner-card .ic-title {
+      font-family: 'Playfair Display', Georgia, serif;
+      font-style: italic;
+      font-size: clamp(0.85rem, 4vw, 1.1rem);
+      color: var(--navy);
+      text-align: center;
+      line-height: 1.4;
+    }
+
+    /* Envelope left & right triangles */
+    .env-left, .env-right {
+      position: absolute;
+      bottom: 0;
+      width: 0; height: 0;
+      border-style: solid;
+    }
+    .env-left {
+      left: 0;
+      border-width: clamp(97px, 27.5vw, 140px) 0 0 clamp(140px, 40vw, 200px);
+      border-color: transparent transparent transparent rgba(180,210,255,0.55);
+    }
+    .env-right {
+      right: 0;
+      border-width: clamp(97px, 27.5vw, 140px) clamp(140px, 40vw, 200px) 0 0;
+      border-color: transparent rgba(180,210,255,0.55) transparent transparent;
+    }
+
+    /* Envelope bottom triangle */
+    .env-bottom {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 0;
+      border-style: solid;
+      border-width: 0 clamp(140px, 40vw, 200px) clamp(97px, 27.5vw, 140px) clamp(140px, 40vw, 200px);
+      border-color: transparent rgba(190,215,255,0.4) rgba(190,215,255,0.4) transparent;
+    }
+
+    /* Envelope flap */
+    .env-flap {
+      width: clamp(280px, 80vw, 400px);
+      height: clamp(97px, 27.5vw, 140px);
+      position: relative;
+      overflow: hidden;
+      transform-origin: top center;
+      transform-style: preserve-3d;
+      transition: transform 0.9s cubic-bezier(0.4, 0, 0.2, 1);
+      z-index: 4;
+      margin-bottom: -2px; /* sit flush on body */
+    }
+
+    .env-flap-shape {
+      width: 0; height: 0;
+      border-style: solid;
+      border-width: 0 clamp(140px, 40vw, 200px) clamp(97px, 27.5vw, 140px) clamp(140px, 40vw, 200px);
+      border-color: transparent transparent rgba(180,215,255,0.9) transparent;
+      filter: drop-shadow(0 6px 12px rgba(107,159,255,0.2));
+      position: absolute;
+      bottom: 0; left: 0;
+    }
+
+    /* Fold crease line on flap */
+    .env-flap-shape::before {
+      content: '';
+      position: absolute;
+      top: 55%; left: 0; right: 0;
+      height: 1px;
+      background: rgba(107,159,255,0.15);
+      transform: rotate(0deg);
+    }
+
+    /* Wax seal */
+    .wax-seal {
+      position: absolute;
+      bottom: 2px; left: 50%;
+      transform: translateX(-50%) translateY(50%);
+      width: clamp(44px, 12vw, 58px);
+      height: clamp(44px, 12vw, 58px);
+      background: radial-gradient(circle at 35% 35%, #6b9fff, #3a6fd8 55%, #1a3a8f);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: clamp(1rem, 3.5vw, 1.4rem);
+      box-shadow: 0 4px 18px rgba(58,111,216,0.5), 0 0 0 3px rgba(255,255,255,0.5);
+      z-index: 6;
+      transition: transform 0.4s cubic-bezier(0.34,1.56,0.64,1), opacity 0.4s;
+      animation: sealPulse 2.5s ease-in-out infinite;
+    }
+    @keyframes sealPulse {
+      0%,100% { box-shadow: 0 4px 18px rgba(58,111,216,0.5), 0 0 0 3px rgba(255,255,255,0.5); }
+      50%      { box-shadow: 0 4px 28px rgba(107,159,255,0.7), 0 0 0 5px rgba(255,255,255,0.4); }
+    }
+
+    /* ── OPEN state ── */
+    #envelope-wrap.opening .env-flap {
+      transform: rotateX(-180deg);
+    }
+    #envelope-wrap.opening .wax-seal {
+      transform: translateX(-50%) translateY(50%) scale(0) rotate(180deg);
+      opacity: 0;
+    }
+    #envelope-wrap.opening .env-inner-card {
+      transform: translateX(-50%) translateY(-85%);
+    }
+
+    /* ── CTA label below envelope ── */
+    #tap-label {
+      margin-top: 26px;
+      font-size: clamp(0.8rem, 3vw, 0.88rem);
+      color: var(--blue-dark);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      font-weight: 500;
+      opacity: 0;
+      animation: fadeInUp 1s 1.4s ease both;
+    }
+    #tap-label .arrow {
+      display: inline-block;
+      animation: arrowBounce 1.2s ease-in-out infinite;
+    }
+    @keyframes arrowBounce {
+      0%,100% { transform: translateY(0); }
+      50%      { transform: translateY(4px); }
+    }
+
+    /* ── FADE OUT whole scene ── */
+    #scene.fade-out {
+      animation: fadeOut 0.8s ease forwards;
+    }
+    @keyframes fadeOut {
+      to { opacity: 0; transform: scale(1.04); }
+    }
+
+    /* ── OPENING LABEL change ── */
+    #tap-label.hidden { opacity: 0; transition: opacity 0.3s; }
+
+    /* ── SPARKLES ── */
+    #sparkles {
+      position: fixed; inset: 0;
+      pointer-events: none; z-index: 20;
+    }
+    .spark {
+      position: absolute;
+      border-radius: 50%;
+      animation: sparkFly 1s ease forwards;
+    }
+    @keyframes sparkFly {
+      0%   { transform: translate(0,0) scale(1); opacity: 1; }
+      100% { transform: translate(var(--tx), var(--ty)) scale(0); opacity: 0; }
+    }
+
+    /* ── Entry animation for whole envelope ── */
+    #envelope-wrap {
+      opacity: 0;
+      animation: envReveal 0.9s 0.3s cubic-bezier(0.22, 1, 0.36, 1) both, floatCard 4s 1.2s ease-in-out infinite;
+    }
+    @keyframes envReveal {
+      from { opacity: 0; transform: translateY(40px) scale(0.92); }
+      to   { opacity: 1; transform: translateY(0) scale(1); }
+    }
+  </style>
+</head>
+<body>
+
+<div id="particles"></div>
+<div id="sparkles"></div>
+
+<div id="scene">
+  <p id="hint">✦ &nbsp;You have a surprise waiting&nbsp; ✦</p>
+
+  <div id="envelope-wrap">
+
+    <!-- Flap (on top visually, folds up) -->
+    <div class="env-flap">
+      <div class="env-flap-shape"></div>
+    </div>
+
+    <!-- Envelope body -->
+    <div class="env-body">
+      <!-- Inner card that rises up -->
+      <div class="env-inner-card">
+        <span class="ic-badge">✦ A little note for you ✦</span>
+        <span class="ic-heart">💙</span>
+        <p class="ic-title">Happy 1st Monthsary,<br/><em>my love</em></p>
+      </div>
+
+      <!-- Side & bottom shading triangles -->
+      <div class="env-left"></div>
+      <div class="env-right"></div>
+      <div class="env-bottom"></div>
+    </div>
+
+    <!-- Wax seal sits between flap & body -->
+    <div class="wax-seal">💙</div>
+
+  </div>
+
+  <p id="tap-label"><span class="arrow">↓</span>&nbsp; tap to open &nbsp;<span class="arrow">↓</span></p>
+</div>
+
+<script>
+  /* ── PARTICLES ── */
+  const COLS  = ['rgba(107,159,255,','rgba(58,111,216,','rgba(184,208,255,'];
+  const STARS = ['✦','✧','⋆','·','★','☆','✩','✴','💫','🌟'];
+  const rand  = (a,b) => Math.random()*(b-a)+a;
+  const rInt  = (a,b) => Math.floor(rand(a,b));
+  const pCont = document.getElementById('particles');
+
+  for (let i=0;i<22;i++) {
+    const p = document.createElement('div');
+    p.className = 'pt';
+    const s = rand(5,18), c = COLS[rInt(0,COLS.length)];
+    p.style.cssText = `left:${rand(0,100)}%;bottom:${rand(-8,5)}%;width:${s}px;height:${s}px;
+      background:${c}${rand(0.3,0.7)});animation-duration:${rand(7,15)}s;animation-delay:${rand(0,12)}s;`;
+    pCont.appendChild(p);
+  }
+  for (let i=0;i<22;i++) {
+    const s = document.createElement('span');
+    s.className = 'st';
+    s.textContent = STARS[rInt(0,STARS.length)];
+    s.style.cssText = `left:${rand(0,100)}%;bottom:${rand(-5,5)}%;
+      color:rgba(107,159,255,${rand(0.4,0.9)});font-size:${rand(0.7,1.5)}rem;
+      animation-duration:${rand(8,18)}s;animation-delay:${rand(0,14)}s;`;
+    pCont.appendChild(s);
+  }
+
+  /* ── SHOOTING STARS ── */
+  function shoot() {
+    const el = document.createElement('div');
+    el.className = 'shoot';
+    el.style.cssText = `left:${rand(5,85)}vw;top:${rand(5,50)}vh;
+      width:${rand(60,120)}px;animation-duration:${rand(0.6,1.2)}s;
+      rotate:${rand(20,50)}deg;`;
+    document.body.appendChild(el);
+    const dur = parseFloat(el.style.animationDuration)*1000;
+    setTimeout(()=>el.remove(), dur+200);
+    setTimeout(shoot, rand(2800,5500));
+  }
+  setTimeout(shoot, 1800);
+
+  /* ── SPARKS ── */
+  const sparkCont = document.getElementById('sparkles');
+  const SCOLS = ['#6b9fff','#3a6fd8','#b8d0ff','#ffffff','#4488ff'];
+  function burstSparks(ox, oy) {
+    for (let i=0;i<28;i++) {
+      const sp = document.createElement('div');
+      sp.className = 'spark';
+      const angle = (i/28)*Math.PI*2;
+      const dist  = rand(50,140);
+      sp.style.cssText = `left:${ox}px;top:${oy}px;
+        width:${rand(5,10)}px;height:${rand(5,10)}px;
+        background:${SCOLS[rInt(0,SCOLS.length)]};
+        --tx:${Math.cos(angle)*dist}px;--ty:${Math.sin(angle)*dist}px;
+        animation-delay:${rand(0,0.15)}s;`;
+      sparkCont.appendChild(sp);
+      setTimeout(()=>sp.remove(), 1200);
+    }
+  }
+
+  /* ── OPEN LOGIC ── */
+  const wrap  = document.getElementById('envelope-wrap');
+  const scene = document.getElementById('scene');
+  const label = document.getElementById('tap-label');
+  let opened = false;
+
+  wrap.addEventListener('click', () => {
+    if (opened) return;
+    opened = true;
+
+    /* Spark burst at seal position */
+    const seal = wrap.querySelector('.wax-seal');
+    const r = seal.getBoundingClientRect();
+    burstSparks(r.left + r.width/2, r.top + r.height/2);
+
+    /* Hide tap label */
+    label.classList.add('hidden');
+
+    /* ── START MUSIC on user gesture ── */
+    startMusic();
+
+    /* Trigger open animation */
+    wrap.classList.add('opening');
+
+    /* After card rises, burst again then fade out & redirect */
+    setTimeout(() => {
+      const card = wrap.querySelector('.env-inner-card');
+      const cr = card.getBoundingClientRect();
+      burstSparks(cr.left + cr.width/2, cr.top + cr.height/2);
+    }, 700);
+
+    setTimeout(() => {
+      scene.classList.add('fade-out');
+    }, 1500);
+
+    setTimeout(() => {
+      window.location.href = 'index.html';
+    }, 2200);
+  });
+
+  /* ── YOUTUBE MUSIC ──────────────────────────────
+     We inject a hidden iframe YouTube player.
+     autoplay=1 only works after a user gesture,
+     so we call this inside the click handler.
+  ─────────────────────────────────────────────── */
+  let musicStarted = false;
+  function startMusic() {
+    if (musicStarted) return;
+    musicStarted = true;
+
+    /* Save flag so index.html knows to also play */
+    try { localStorage.setItem('msary_music', '1'); } catch(e){}
+
+    const iframe = document.createElement('iframe');
+    iframe.id = 'yt-music';
+    iframe.src = 'https://www.youtube.com/embed/MaUKP1CryC0?autoplay=1&loop=1&playlist=MaUKP1CryC0&controls=0&disablekb=1&fs=0&modestbranding=1&mute=0';
+    iframe.allow = 'autoplay; encrypted-media';
+    iframe.style.cssText = 'position:fixed;width:1px;height:1px;bottom:0;left:0;opacity:0;pointer-events:none;border:none;';
+    document.body.appendChild(iframe);
+  }
+</script>
+</body>
+</html>

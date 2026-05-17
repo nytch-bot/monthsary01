@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Our Little Game 🎮💙</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { width: 100%; min-height: 100%; }
+
+    :root {
+      --blue-mid:  #6b9fff;
+      --blue-deep: #3a6fd8;
+      --navy:      #0d1f5c;
+    }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background:
+        radial-gradient(ellipse 70% 50% at 15% 10%, rgba(100,150,255,0.45) 0%, transparent 55%),
+        radial-gradient(ellipse 60% 45% at 85% 90%, rgba(60,100,220,0.35) 0%, transparent 55%),
+        linear-gradient(160deg, #c8daff 0%, #b0c8ff 30%, #a8bfff 100%);
+      background-attachment: fixed;
+      min-height: 100vh;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      padding: 24px 16px; position: relative; overflow-x: hidden;
+    }
+
+    /* PARTICLES */
+    #ptc { position:fixed; inset:0; pointer-events:none; z-index:0; overflow:hidden; }
+    .pt  { position:absolute; border-radius:50%; opacity:0; animation: ptF linear infinite; }
+    .st  { position:absolute; opacity:0; user-select:none; animation: stD linear infinite; }
+    @keyframes ptF { 0%{transform:translateY(0) scale(1);opacity:0}10%{opacity:.7}85%{opacity:.4}100%{transform:translateY(-110vh) scale(.5);opacity:0} }
+    @keyframes stD { 0%{transform:translateY(0) rotate(0deg);opacity:0}10%{opacity:.8}80%{opacity:.3}100%{transform:translateY(-110vh) rotate(360deg);opacity:0} }
+
+    /* SHOOTING STARS */
+    .shoot { position:fixed; height:1.5px; border-radius:2px;
+      background:linear-gradient(to right,rgba(255,255,255,0),rgba(200,225,255,1),rgba(255,255,255,.2));
+      pointer-events:none; opacity:0; animation:shootA linear forwards; }
+    @keyframes shootA { 0%{opacity:0}8%{opacity:1}100%{opacity:0;transform:translate(200px,100px)} }
+
+    /* FLOATING HEARTS */
+    #fhearts { position:fixed; inset:0; pointer-events:none; z-index:1; overflow:hidden; }
+    .fh { position:absolute; bottom:-10%; user-select:none; animation:floatH linear forwards; }
+    @keyframes floatH { 0%{transform:translateY(0) rotate(0deg) scale(1);opacity:0}8%{opacity:.9}80%{opacity:.5}100%{transform:translateY(-110vh) rotate(25deg) scale(.7);opacity:0} }
+
+    /* MAIN CARD */
+    .game-card {
+      position:relative; z-index:10;
+      background:rgba(255,255,255,0.88);
+      backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px);
+      border-radius:36px;
+      border:1.5px solid rgba(184,208,255,0.7);
+      box-shadow:0 24px 80px rgba(58,111,216,0.25),inset 0 1.5px 0 rgba(255,255,255,0.95);
+      width:100%; max-width:520px;
+      padding:40px 36px 36px; text-align:center;
+      animation:cardIn .8s cubic-bezier(.22,1,.36,1) both;
+    }
+    @keyframes cardIn { from{opacity:0;transform:translateY(40px) scale(.96)}to{opacity:1;transform:translateY(0) scale(1)} }
+
+    /* SCREENS */
+    .screen { display:none; }
+    .screen.active { display:block; animation:fadeUp .5s cubic-bezier(.22,1,.36,1) both; }
+    @keyframes fadeUp { from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)} }
+
+    /* BADGE */
+    .badge {
+      display:inline-block;
+      background:linear-gradient(135deg,#6b9fff,#3a6fd8);
+      color:#fff; font-size:.65rem; font-weight:700;
+      letter-spacing:.18em; text-transform:uppercase;
+      padding:6px 18px; border-radius:999px;
+      box-shadow:0 4px 16px rgba(58,111,216,.35);
+      margin-bottom:18px;
+    }
+
+    /* INTRO */
+    .intro-icon { font-size:3.5rem; margin-bottom:12px; display:block; animation:bobble 2s ease-in-out infinite; }
+    @keyframes bobble { 0%,100%{transform:translateY(0) rotate(-3deg)}50%{transform:translateY(-10px) rotate(3deg)} }
+    .intro-title { font-family:'Playfair Display',Georgia,serif; font-style:italic; font-size:clamp(1.6rem,6vw,2.1rem); color:var(--navy); margin-bottom:10px; line-height:1.2; }
+    .intro-title em { background:linear-gradient(135deg,#3a6fd8,#6b9fff); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+    .intro-sub { font-size:.92rem; color:#4466aa; line-height:1.75; margin-bottom:28px; max-width:360px; margin-left:auto; margin-right:auto; }
+    .intro-sub strong { color:var(--blue-deep); font-weight:700; }
+    .hearts-row { display:flex; justify-content:center; gap:6px; margin-bottom:28px; }
+    .hearts-row span { font-size:1.3rem; animation:popIn .5s cubic-bezier(.34,1.56,.64,1) both; }
+    .hearts-row span:nth-child(1){animation-delay:.05s}
+    .hearts-row span:nth-child(2){animation-delay:.12s}
+    .hearts-row span:nth-child(3){animation-delay:.19s}
+    .hearts-row span:nth-child(4){animation-delay:.26s}
+    .hearts-row span:nth-child(5){animation-delay:.33s}
+    @keyframes popIn { from{opacity:0;transform:scale(.4) rotate(-10deg)}to{opacity:1;transform:scale(1) rotate(0deg)} }
+
+    /* BUTTONS */
+    .btn {
+      display:inline-block;
+      background:linear-gradient(135deg,#3a6fd8,#6b9fff);
+      color:#fff; font-family:'DM Sans',sans-serif;
+      font-size:.96rem; font-weight:600; letter-spacing:.04em;
+      padding:14px 38px; border:none; border-radius:999px; cursor:pointer;
+      box-shadow:0 6px 24px rgba(58,111,216,.4);
+      transition:transform .22s cubic-bezier(.34,1.56,.64,1),box-shadow .15s;
+    }
+    .btn:hover  { transform:translateY(-4px) scale(1.04); box-shadow:0 14px 36px rgba(58,111,216,.5); }
+    .btn:active { transform:scale(.96); }
+    .btn-retry  { background:linear-gradient(135deg,#8899cc,#aabbdd); box-shadow:0 6px 24px rgba(100,120,180,.3); }
+    .btn-surprise { background:linear-gradient(135deg,#e84a9a,#ff80c8); box-shadow:0 6px 24px rgba(232,74,154,.4); }
+
+    /* PROGRESS */
+    .progress-wrap { display:flex; align-items:center; gap:10px; margin-bottom:22px; }
+    .progress-track { flex:1; height:8px; border-radius:999px; background:rgba(107,159,255,.18); overflow:hidden; }
+    .progress-fill { height:100%; border-radius:999px; background:linear-gradient(90deg,#3a6fd8,#6b9fff); transition:width .55s cubic-bezier(.22,1,.36,1); width:0%; }
+    .progress-label { font-size:.72rem; font-weight:700; color:#5577cc; white-space:nowrap; }
+
+    /* SCORE HEARTS */
+    .score-hearts { display:flex; justify-content:center; gap:5px; margin-bottom:18px; }
+    .sh { font-size:1.2rem; transition:transform .3s cubic-bezier(.34,1.56,.64,1); }
+    .sh.earned { animation:heartPop .5s cubic-bezier(.34,1.56,.64,1) both; }
+    @keyframes heartPop { 0%{transform:scale(.4) rotate(-10deg)}60%{transform:scale(1.3) rotate(5deg)}100%{transform:scale(1) rotate(0deg)} }
+
+    /* QUESTION */
+    .q-label { font-size:.65rem; font-weight:700; letter-spacing:.2em; text-transform:uppercase; color:var(--blue-mid); margin-bottom:10px; }
+    .q-emoji { font-size:2.4rem; margin-bottom:10px; display:block; }
+    .q-text { font-family:'Playfair Display',Georgia,serif; font-style:italic; font-size:clamp(.95rem,3.5vw,1.15rem); color:var(--navy); line-height:1.6; margin-bottom:22px; min-height:52px; }
+
+    /* OPTIONS */
+    .options { display:flex; flex-direction:column; gap:10px; margin-bottom:16px; }
+    .opt {
+      background:rgba(255,255,255,.9); border:1.5px solid rgba(107,159,255,.3);
+      border-radius:18px; padding:13px 20px;
+      font-size:.93rem; font-weight:500; color:#1a3a8f;
+      cursor:pointer; text-align:left; transition:all .18s ease; position:relative;
+    }
+    .opt:hover:not(:disabled) { border-color:var(--blue-mid); transform:translateX(5px); box-shadow:0 4px 16px rgba(107,159,255,.2); background:rgba(107,159,255,.08); }
+    .opt.correct { background:linear-gradient(135deg,rgba(80,200,120,.18),rgba(60,180,100,.1)); border-color:#4caf77; color:#1a5c35; animation:correctPulse .4s ease; }
+    @keyframes correctPulse { 0%,100%{transform:scale(1)}50%{transform:scale(1.02)} }
+    .opt.wrong   { background:linear-gradient(135deg,rgba(220,80,80,.12),rgba(200,60,60,.08)); border-color:#e06060; color:#7a1a1a; }
+    .opt:disabled{ cursor:default; }
+
+    /* FEEDBACK */
+    .feedback { min-height:28px; font-size:1rem; font-weight:600; color:var(--blue-deep); transition:opacity .3s; opacity:0; margin-bottom:8px; }
+    .feedback.show { opacity:1; }
+    .feedback.ok  { color:#2a8a4a; }
+    .feedback.bad { color:#cc4444; }
+
+    /* RESULT */
+    .result-icon { font-size:4.5rem; margin-bottom:14px; display:block; animation:resultPop .7s cubic-bezier(.34,1.56,.64,1) both; }
+    @keyframes resultPop { from{opacity:0;transform:scale(.3) rotate(-20deg)}to{opacity:1;transform:scale(1) rotate(0deg)} }
+    .result-score { font-family:'Playfair Display',Georgia,serif; font-size:clamp(1.5rem,6vw,2rem); font-style:italic; color:var(--navy); margin-bottom:8px; }
+    .result-score em { background:linear-gradient(135deg,#3a6fd8,#6b9fff); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+    .result-msg { font-size:.93rem; color:#4466aa; line-height:1.8; margin-bottom:28px; max-width:340px; margin-left:auto; margin-right:auto; }
+    .result-hearts { display:flex; justify-content:center; gap:4px; font-size:1.5rem; margin-bottom:24px; }
+    .result-hearts span { animation:popIn .4s cubic-bezier(.34,1.56,.64,1) both; }
+
+    /* CONFETTI */
+    .conf { position:fixed; pointer-events:none; border-radius:2px; animation:confFall linear forwards; z-index:50; }
+    @keyframes confFall { 0%{opacity:1;transform:translateY(-10px) rotate(0deg)}100%{opacity:0;transform:translateY(100vh) rotate(900deg)} }
+
+    @keyframes sparkFly { 0%{transform:translate(0,0) scale(1);opacity:1}100%{transform:translate(var(--tx),var(--ty)) scale(0);opacity:0} }
+
+    @media(max-width:480px){
+      .game-card { padding:30px 18px 28px; border-radius:26px; }
+      .intro-title { font-size:1.5rem; }
+      .opt { padding:11px 14px; font-size:.86rem; }
+    }
+  </style>
+</head>
+<body>
+
+<div id="ptc"></div>
+<div id="fhearts"></div>
+
+<div class="game-card">
+
+  <!-- INTRO -->
+  <div class="screen active" id="scrIntro">
+    <div class="badge">✦ A Little Game For Us ✦</div>
+    <span class="intro-icon">🎮</span>
+    <h1 class="intro-title">Let's Play,<br/><em>My Love 💙</em></h1>
+    <p class="intro-sub">
+      5 cute questions all about <strong>us</strong> 💙<br/>
+      Score <strong>4 out of 5</strong> or more and unlock your surprise! 🌷
+    </p>
+    <div class="hearts-row">
+      <span>💙</span><span>🌙</span><span>✦</span><span>🌷</span><span>💫</span>
+    </div>
+    <button class="btn" id="startBtn">Let's Play! ✨</button>
+  </div>
+
+  <!-- QUESTION -->
+  <div class="screen" id="scrQuestion">
+    <div class="badge" id="qBadge">✦ Question 1 of 5 ✦</div>
+    <div class="progress-wrap">
+      <div class="progress-track"><div class="progress-fill" id="pFill"></div></div>
+      <span class="progress-label" id="pLabel">1 / 5</span>
+    </div>
+    <div class="score-hearts">
+      <span class="sh" id="sh0">🤍</span><span class="sh" id="sh1">🤍</span>
+      <span class="sh" id="sh2">🤍</span><span class="sh" id="sh3">🤍</span>
+      <span class="sh" id="sh4">🤍</span>
+    </div>
+    <span class="q-emoji" id="qEmoji"></span>
+    <p class="q-text" id="qText"></p>
+    <div class="options" id="optsWrap"></div>
+    <p class="feedback" id="fb"></p>
+  </div>
+
+  <!-- RESULT -->
+  <div class="screen" id="scrResult">
+    <span class="result-icon" id="rIcon"></span>
+    <div class="result-hearts" id="rHearts"></div>
+    <h2 class="result-score" id="rScore"></h2>
+    <p class="result-msg" id="rMsg"></p>
+    <button class="btn btn-surprise" id="surpriseBtn" style="display:none;">Open Your Surprise 🌷</button>
+    <button class="btn btn-retry"    id="retryBtn"    style="display:none;">Try Again 🥺</button>
+  </div>
+
+</div>
+
+<script>
+(function(){
+  const Q = [
+    {
+      emoji:'💙', text:"What colour shows up everywhere in our little world together?",
+      opts:["Soft Pink 🌸","Deep Blue 💙","Golden Yellow ☀️","Lavender 💜"], ans:1,
+      right:"Yes! Blue — it's the colour of everything we share 💙",
+      wrong:"It's blue, baby! Just like everything here 💙"
+    },
+    {
+      emoji:'🌙', text:"Which symbol do you see everywhere in our story?",
+      opts:["🌸 A flower","⭐ A star","🌙 The moon","☀️ The sun"], ans:2,
+      right:"The moon! Always watching over us both 🌙✨",
+      wrong:"The moon 🌙 — always there, just like my love for you!"
+    },
+    {
+      emoji:'🎂', text:"How long have we been each other's person?",
+      opts:["2 weeks","6 months","3 months","1 month 💙"], ans:3,
+      right:"One whole beautiful month! 🎉 And forever to go 💙",
+      wrong:"One month, love! Short but so magical 💙"
+    },
+    {
+      emoji:'✦', text:"What two zodiac signs are written in our stars?",
+      opts:["♈ & ♓","♒ & ♏","♋ & ♎","♉ & ♐"], ans:1,
+      right:"Aquarius & Scorpio ♒♏ — written in the stars! ✦",
+      wrong:"We're Aquarius ♒ & Scorpio ♏ — a perfect pair! ✦"
+    },
+    {
+      emoji:'🌷', text:"Which flower blooms just for you in our garden?",
+      opts:["🌹 A red rose","🌻 A sunflower","🌷 A tulip","🌺 A hibiscus"], ans:2,
+      right:"A tulip! 🌷 Every petal is a piece of my heart for you 💙",
+      wrong:"Tulips! 🌷 Our little garden is full of them, just for you 💙"
+    }
+  ];
+
+  let qi=0, score=0;
+  const $ = id => document.getElementById(id);
+  const scrIntro=$('scrIntro'), scrQ=$('scrQuestion'), scrR=$('scrResult');
+
+  function show(el){ el.classList.add('active'); }
+  function hide(el){ el.classList.remove('active'); }
+
+  function spark(el){
+    const r=el.getBoundingClientRect(), cx=r.left+r.width/2, cy=r.top+r.height/2;
+    const cols=['#6b9fff','#3a6fd8','#b8d0ff','#fff','#ff80c8','#ffd6a5'];
+    for(let i=0;i<22;i++){
+      const sp=document.createElement('div');
+      sp.style.cssText=`position:fixed;border-radius:50%;z-index:9999;pointer-events:none;
+        left:${cx}px;top:${cy}px;
+        width:${4+Math.random()*8}px;height:${4+Math.random()*8}px;
+        background:${cols[Math.floor(Math.random()*cols.length)]};
+        --tx:${(Math.random()-.5)*180}px;--ty:${(Math.random()-.5)*180}px;
+        animation:sparkFly .9s ease-out forwards;animation-delay:${Math.random()*.1}s;`;
+      document.body.appendChild(sp);
+      setTimeout(()=>sp.remove(),1100);
+    }
+  }
+
+  function confetti(){
+    const cc=['#6b9fff','#3a6fd8','#b8d0ff','#ffb8d0','#fff','#ffd6a5','#b8ffda','#ffc8f0'];
+    for(let i=0;i<100;i++){
+      const c=document.createElement('div'); c.className='conf';
+      const sz=6+Math.random()*10;
+      c.style.cssText=`left:${Math.random()*100}vw;top:-20px;width:${sz}px;height:${sz}px;
+        background:${cc[Math.floor(Math.random()*cc.length)]};
+        border-radius:${Math.random()>.5?'50%':'2px'};
+        animation-duration:${1.2+Math.random()*2}s;animation-delay:${Math.random()*1.5}s;`;
+      document.body.appendChild(c);
+      setTimeout(()=>c.remove(),4800);
+    }
+  }
+
+  function refreshHearts(){
+    for(let i=0;i<5;i++){
+      const el=$('sh'+i);
+      el.textContent = i<score ? '💙' : '🤍';
+      if(i<score) el.classList.add('earned');
+      else el.classList.remove('earned');
+    }
+  }
+
+  function loadQ(){
+    const q=Q[qi];
+    $('qBadge').textContent=`✦ Question ${qi+1} of ${Q.length} ✦`;
+    $('pFill').style.width=((qi/Q.length)*100)+'%';
+    $('pLabel').textContent=`${qi+1} / ${Q.length}`;
+    $('qEmoji').textContent=q.emoji;
+    $('qText').textContent=q.text;
+    $('fb').textContent=''; $('fb').className='feedback';
+    refreshHearts();
+    $('optsWrap').innerHTML='';
+    q.opts.forEach((o,i)=>{
+      const btn=document.createElement('button'); btn.className='opt'; btn.textContent=o;
+      btn.addEventListener('click',()=>pick(i,btn));
+      $('optsWrap').appendChild(btn);
+    });
+  }
+
+  function pick(idx,btn){
+    const q=Q[qi];
+    $('optsWrap').querySelectorAll('.opt').forEach(b=>b.disabled=true);
+    const ok=idx===q.ans;
+    if(ok){ score++; btn.classList.add('correct'); spark(btn); }
+    else { btn.classList.add('wrong'); $('optsWrap').querySelectorAll('.opt')[q.ans].classList.add('correct'); }
+    refreshHearts();
+    const fb=$('fb');
+    fb.textContent=ok?q.right:q.wrong;
+    fb.className='feedback show '+(ok?'ok':'bad');
+    setTimeout(()=>{
+      qi++;
+      if(qi<Q.length){ loadQ(); }
+      else { $('pFill').style.width='100%'; setTimeout(showResult,500); }
+    },1900);
+  }
+
+  function showResult(){
+    hide(scrQ); show(scrR);
+    const rh=$('rHearts'); rh.innerHTML='';
+    for(let i=0;i<Q.length;i++){
+      const s=document.createElement('span');
+      s.textContent=i<score?'💙':'🤍';
+      s.style.animationDelay=(i*.1)+'s';
+      rh.appendChild(s);
+    }
+    if(score>=4){
+      $('rIcon').textContent='🎉';
+      $('rScore').innerHTML=`You scored <em>${score} / 5</em>! 💙`;
+      $('rMsg').textContent = score===5
+        ? "PERFECT! You know us so perfectly, baby! Your surprise is waiting 🌷✨"
+        : "Amazing!! You know us so well — here's your surprise, love 🌷💙";
+      $('surpriseBtn').style.display='inline-block';
+      $('retryBtn').style.display='none';
+      setTimeout(confetti,150);
+    } else {
+      $('rIcon').textContent='🥺';
+      $('rScore').innerHTML=`You got <em>${score} / 5</em>…`;
+      $('rMsg').textContent="Aww don't worry! You need 4 or more to unlock the surprise. Try again, I believe in you! 💙";
+      $('surpriseBtn').style.display='none';
+      $('retryBtn').style.display='inline-block';
+    }
+  }
+
+  $('startBtn').addEventListener('click',()=>{ spark($('startBtn')); hide(scrIntro); setTimeout(()=>{ show(scrQ); loadQ(); },120); });
+  $('surpriseBtn').addEventListener('click',()=>{ spark($('surpriseBtn')); setTimeout(()=>{ window.location.href='surprise.html'; },250); });
+  $('retryBtn').addEventListener('click',()=>{ qi=0; score=0; hide(scrR); setTimeout(()=>{ show(scrQ); loadQ(); },100); });
+
+  /* ── BG FX ── */
+  const ptc=document.getElementById('ptc');
+  const COLS=['rgba(107,159,255,','rgba(58,111,216,','rgba(184,208,255,'];
+  const STARS=['✦','✧','⋆','·','★','✩','💫','🌟','💙'];
+  for(let i=0;i<18;i++){
+    const p=document.createElement('div'); p.className='pt';
+    const s=4+Math.random()*16, c=COLS[Math.floor(Math.random()*3)];
+    p.style.cssText=`left:${Math.random()*100}%;bottom:${Math.random()*10-5}%;width:${s}px;height:${s}px;
+      background:${c}${.3+Math.random()*.5});animation-duration:${7+Math.random()*10}s;animation-delay:${Math.random()*12}s;`;
+    ptc.appendChild(p);
+  }
+  for(let i=0;i<20;i++){
+    const s=document.createElement('span'); s.className='st';
+    s.textContent=STARS[Math.floor(Math.random()*STARS.length)];
+    s.style.cssText=`left:${Math.random()*100}%;bottom:${Math.random()*8-3}%;
+      color:rgba(107,159,255,${.4+Math.random()*.5});font-size:${.7+Math.random()*1.3}rem;
+      animation-duration:${8+Math.random()*12}s;animation-delay:${Math.random()*14}s;`;
+    ptc.appendChild(s);
+  }
+  const hc=document.getElementById('fhearts'), HH=['💙','💙','✦','💫','🌙','💙','✧','🌷'];
+  function spawnH(){
+    const h=document.createElement('span'); h.className='fh';
+    h.textContent=HH[Math.floor(Math.random()*HH.length)];
+    h.style.cssText=`left:${3+Math.random()*93}%;font-size:${.7+Math.random()*1.5}rem;
+      animation-duration:${6+Math.random()*10}s;animation-delay:${Math.random()}s;opacity:0;`;
+    hc.appendChild(h); setTimeout(()=>h.remove(),13000);
+    setTimeout(spawnH,700+Math.random()*1400);
+  }
+  spawnH();
+  function shoot(){
+    const el=document.createElement('div'); el.className='shoot';
+    el.style.cssText=`left:${5+Math.random()*80}vw;top:${5+Math.random()*45}vh;
+      width:${60+Math.random()*100}px;animation-duration:${.6+Math.random()}s;rotate:${20+Math.random()*35}deg;`;
+    document.body.appendChild(el);
+    setTimeout(()=>el.remove(),(parseFloat(el.style.animationDuration)*1000)+200);
+    setTimeout(shoot,2500+Math.random()*4500);
+  }
+  setTimeout(shoot,1500);
+})();
+</script>
+</body>
+</html>

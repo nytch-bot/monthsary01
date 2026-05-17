@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Your Surprise 🌷</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+    html,body{width:100%;min-height:100%;overflow-x:hidden;}
+
+    body {
+      font-family:'DM Sans',sans-serif;
+      background:
+        radial-gradient(ellipse 70% 50% at 15% 10%, rgba(100,150,255,0.45) 0%, transparent 55%),
+        radial-gradient(ellipse 60% 45% at 85% 90%, rgba(60,100,220,0.35) 0%, transparent 55%),
+        linear-gradient(160deg,#c8daff 0%,#b0c8ff 30%,#a8bfff 100%);
+      background-attachment:fixed;
+      display:flex; flex-direction:column;
+      align-items:center; justify-content:center;
+      min-height:100vh; padding:30px 20px;
+      position:relative;
+    }
+
+    /* ── PARTICLES ── */
+    #ptc{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden;}
+    .pt{position:absolute;border-radius:50%;opacity:0;animation:ptF linear infinite;}
+    .st{position:absolute;opacity:0;user-select:none;animation:stD linear infinite;}
+    @keyframes ptF{0%{transform:translateY(0) scale(1);opacity:0}10%{opacity:.7}85%{opacity:.4}100%{transform:translateY(-110vh) scale(.5);opacity:0}}
+    @keyframes stD{0%{transform:translateY(0) rotate(0deg);opacity:0}10%{opacity:.8}80%{opacity:.3}100%{transform:translateY(-110vh) rotate(360deg);opacity:0}}
+
+    /* ── SHOOTING STARS ── */
+    .shoot{position:fixed;height:1.5px;border-radius:2px;
+      background:linear-gradient(to right,rgba(255,255,255,0),rgba(200,225,255,1),rgba(255,255,255,.2));
+      pointer-events:none;opacity:0;animation:shootA linear forwards;}
+    @keyframes shootA{0%{opacity:0}8%{opacity:1}100%{opacity:0;transform:translate(200px,100px)}}
+
+    /* ── CONTENT ── */
+    .surprise-wrap{
+      position:relative;z-index:10;
+      text-align:center;
+      animation:wrapReveal 0.9s cubic-bezier(0.22,1,0.36,1) both;
+    }
+    @keyframes wrapReveal{from{opacity:0;transform:translateY(40px)}to{opacity:1;transform:translateY(0)}}
+
+    .badge{
+      display:inline-block;
+      background:linear-gradient(135deg,#6b9fff,#3a6fd8);
+      color:#fff; font-size:.68rem; font-weight:700;
+      letter-spacing:.18em; text-transform:uppercase;
+      padding:7px 22px; border-radius:999px;
+      box-shadow:0 4px 18px rgba(58,111,216,.38);
+      margin-bottom:22px;
+      animation:popIn .6s .2s cubic-bezier(.34,1.56,.64,1) both;
+    }
+    @keyframes popIn{from{opacity:0;transform:scale(.5)}to{opacity:1;transform:scale(1)}}
+
+    .surprise-title{
+      font-family:'Playfair Display',Georgia,serif;
+      font-size:clamp(2rem,8vw,3rem);
+      font-style:italic; color:#0d1f5c;
+      line-height:1.15; margin-bottom:14px;
+      opacity:0; animation:fadeUp .8s .4s ease both;
+    }
+    .surprise-title em{
+      background:linear-gradient(135deg,#3a6fd8,#6b9fff);
+      -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+      display:block;
+    }
+    @keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+
+    .surprise-msg{
+      font-family:'Playfair Display',Georgia,serif;
+      font-style:italic; font-size:clamp(.9rem,3vw,1.05rem);
+      color:#3a5aaa; line-height:1.85;
+      max-width:440px; margin:0 auto 36px;
+      opacity:0; animation:fadeUp .8s .65s ease both;
+    }
+
+    /* ── GARDEN ── */
+    .garden{
+      display:flex; align-items:flex-end; justify-content:center;
+      flex-wrap:wrap; gap:8px;
+      min-height:160px; margin-bottom:28px;
+      padding:0 10px;
+    }
+
+    .tulip-wrap{
+      opacity:0;
+      transform:translateY(50px) scale(.5);
+      transition:opacity .7s cubic-bezier(.34,1.56,.64,1),
+                  transform .75s cubic-bezier(.34,1.56,.64,1);
+    }
+    .tulip-wrap.bloom{opacity:1;transform:translateY(0) scale(1);}
+
+    /* Sway animation for each tulip */
+    .tulip-wrap.bloom svg{
+      animation:sway 3s ease-in-out infinite;
+      transform-origin:bottom center;
+    }
+    .tulip-wrap:nth-child(odd) svg{ animation-direction:alternate-reverse; }
+    @keyframes sway{0%,100%{transform:rotate(-4deg)}50%{transform:rotate(4deg)}}
+
+    /* ── HEARTS RAIN ── */
+    #hearts{position:fixed;inset:0;pointer-events:none;z-index:5;overflow:hidden;}
+    .fh{
+      position:absolute;bottom:-10%;user-select:none;
+      animation:floatH linear forwards;
+    }
+    @keyframes floatH{
+      0%{transform:translateY(0) rotate(0deg) scale(1);opacity:0}
+      8%{opacity:.9}80%{opacity:.5}
+      100%{transform:translateY(-110vh) rotate(25deg) scale(.7);opacity:0}
+    }
+
+    /* ── MESSAGE BOX ── */
+    .msg-box{
+      background:rgba(255,255,255,.85);
+      backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
+      border-radius:28px;
+      border:1.5px solid rgba(184,208,255,.7);
+      box-shadow:0 16px 56px rgba(58,111,216,.22),inset 0 1.5px 0 rgba(255,255,255,.95);
+      padding:32px 36px; max-width:440px; width:100%;
+      margin:0 auto 28px;
+      opacity:0; animation:fadeUp .9s 1.8s ease both;
+    }
+    .msg-box p{
+      font-family:'Playfair Display',Georgia,serif;
+      font-style:italic; font-size:1.05rem;
+      color:#1a3a8f; line-height:1.9;
+    }
+    .msg-box .sig{
+      margin-top:16px; font-size:.88rem;
+      font-style:normal; font-weight:600;
+      color:#3a6fd8; letter-spacing:.04em;
+    }
+
+    /* ── BACK BUTTON ── */
+    .back-btn{
+      display:inline-block;
+      background:linear-gradient(135deg,#3a6fd8,#6b9fff);
+      color:#fff; font-family:'DM Sans',sans-serif;
+      font-size:.92rem; font-weight:600; letter-spacing:.04em;
+      padding:13px 36px; border:none; border-radius:999px;
+      cursor:pointer;
+      box-shadow:0 6px 24px rgba(58,111,216,.4);
+      transition:transform .2s cubic-bezier(.34,1.56,.64,1),box-shadow .15s;
+      opacity:0; animation:fadeUp .8s 2.2s ease both;
+    }
+    .back-btn:hover{transform:translateY(-4px) scale(1.04);box-shadow:0 14px 36px rgba(58,111,216,.5);}
+    .back-btn:active{transform:scale(.96);}
+
+    /* ── FLOATING CLICK ME BUTTON ── */
+    .flower-btn{
+      position:fixed;
+      right:20px; top:50%;
+      transform:translateY(-50%);
+      z-index:100;
+      display:flex; flex-direction:column; align-items:center; gap:8px;
+      text-decoration:none;
+      opacity:0; animation:fadeUp .8s 2.6s ease both;
+    }
+    .flower-btn .flower-icon{
+      font-size:2.8rem;
+      display:block;
+      animation:flowerFloat 2.5s ease-in-out infinite;
+      filter:drop-shadow(0 4px 12px rgba(232,48,154,.5));
+    }
+    .flower-btn .flower-label{
+      background:linear-gradient(135deg,#ff80c0,#e8309a);
+      color:#fff; font-family:'DM Sans',sans-serif;
+      font-size:.72rem; font-weight:700; letter-spacing:.1em;
+      text-transform:uppercase;
+      padding:7px 14px; border-radius:999px;
+      box-shadow:0 4px 18px rgba(232,48,154,.45);
+      white-space:nowrap;
+      transition:transform .2s cubic-bezier(.34,1.56,.64,1), box-shadow .15s;
+    }
+    .flower-btn:hover .flower-label{
+      transform:scale(1.08);
+      box-shadow:0 8px 28px rgba(232,48,154,.6);
+    }
+    .flower-btn:hover .flower-icon{
+      animation:flowerFloat 1s ease-in-out infinite;
+    }
+    @keyframes flowerFloat{
+      0%,100%{transform:translateY(0) rotate(-5deg) scale(1)}
+      50%{transform:translateY(-10px) rotate(5deg) scale(1.08)}
+    }
+
+    /* ping ring */
+    .flower-btn::before{
+      content:'';
+      position:absolute;
+      top:-4px; left:50%; transform:translateX(-50%);
+      width:60px; height:60px;
+      border-radius:50%;
+      border:2.5px solid rgba(232,48,154,.5);
+      animation:ping 2s 3s ease-out infinite;
+      pointer-events:none;
+    }
+    @keyframes ping{
+      0%{transform:translateX(-50%) scale(.6);opacity:.9}
+      100%{transform:translateX(-50%) scale(1.8);opacity:0}
+    }
+
+    /* ── CONFETTI ── */
+    .conf{
+      position:fixed;
+      border-radius:2px;
+      pointer-events:none;
+      opacity:0;
+      animation:confR linear forwards;
+      z-index:20;
+    }
+    @keyframes confR{
+      0%{opacity:1;transform:translateY(-10px) rotate(0)}
+      100%{opacity:0;transform:translateY(100vh) rotate(900deg)}
+    }
+  </style>
+</head>
+<body>
+
+<div id="ptc"></div>
+<div id="hearts"></div>
+
+<!-- Click Me Flower Button -->
+<a class="flower-btn" href="flower.html">
+  <span class="flower-icon">🌸</span>
+  <span class="flower-label">Click Me!</span>
+</a>
+
+<div class="surprise-wrap">
+  <div class="badge">✦ You Won! ✦</div>
+  <h1 class="surprise-title">A Garden<br/><em>Just for You 🌷</em></h1>
+  <p class="surprise-msg">You know us so well, baby.<br/>Every petal here is a little piece of my heart for you 💙</p>
+
+  <!-- Tulip garden — populated by JS -->
+  <div class="garden" id="garden"></div>
+
+  <!-- Love note -->
+  <div class="msg-box">
+    <p>
+      Thank you for being my person, for every text, every laugh, every quiet moment
+      you make everything feel like home. 💙<br/><br/>
+      Happy 1st Monthsary, my bby.
+      more months and yrs to come. ✦
+    </p>
+    <p class="sig">— Bf mo na nerd 💙</p>
+  </div>
+
+  <button class="back-btn" onclick="window.location.href='index.html'">← Back Home 💙</button>
+</div>
+
+<script>
+  const rand = (a,b)=>Math.random()*(b-a)+a;
+  const rInt = (a,b)=>Math.floor(rand(a,b));
+  const COLS  = ['rgba(107,159,255,','rgba(58,111,216,','rgba(184,208,255,'];
+  const STARS = ['✦','✧','⋆','·','★','✩','💫','🌟'];
+
+  /* ── PARTICLES ── */
+  const ptc = document.getElementById('ptc');
+  for(let i=0;i<20;i++){
+    const p=document.createElement('div'); p.className='pt';
+    const s=rand(5,18),c=COLS[rInt(0,3)];
+    p.style.cssText=`left:${rand(0,100)}%;bottom:${rand(-8,5)}%;width:${s}px;height:${s}px;
+      background:${c}${rand(.3,.7)});animation-duration:${rand(7,15)}s;animation-delay:${rand(0,12)}s;`;
+    ptc.appendChild(p);
+  }
+  for(let i=0;i<20;i++){
+    const s=document.createElement('span'); s.className='st';
+    s.textContent=STARS[rInt(0,STARS.length)];
+    s.style.cssText=`left:${rand(0,100)}%;bottom:${rand(-5,5)}%;
+      color:rgba(107,159,255,${rand(.4,.9)});font-size:${rand(.7,1.5)}rem;
+      animation-duration:${rand(8,18)}s;animation-delay:${rand(0,14)}s;`;
+    ptc.appendChild(s);
+  }
+
+  /* ── SHOOTING STARS ── */
+  function shoot(){
+    const el=document.createElement('div'); el.className='shoot';
+    el.style.cssText=`left:${rand(5,85)}vw;top:${rand(5,50)}vh;
+      width:${rand(60,130)}px;animation-duration:${rand(.6,1.2)}s;rotate:${rand(20,50)}deg;`;
+    document.body.appendChild(el);
+    setTimeout(()=>el.remove(),(parseFloat(el.style.animationDuration)*1000)+200);
+    setTimeout(shoot,rand(2500,5000));
+  }
+  setTimeout(shoot,1500);
+
+  /* ── FLOATING HEARTS ── */
+  const hCont=document.getElementById('hearts');
+  const HH=['💙','💙','✦','💫','🌙','💙','✧','🌷'];
+  function spawnH(){
+    const h=document.createElement('span'); h.className='fh';
+    h.textContent=HH[rInt(0,HH.length)];
+    const sz=rand(.7,1.8);
+    h.style.cssText=`left:${rand(3,95)}%;font-size:${sz}rem;
+      animation-duration:${rand(6,12)}s;animation-delay:${rand(0,1)}s;opacity:0;`;
+    hCont.appendChild(h);
+    setTimeout(()=>h.remove(),13000);
+    setTimeout(spawnH,rand(600,1600));
+  }
+  spawnH();
+
+  /* ── CONFETTI RAIN ── */
+  function confetti(){
+    const cc=['#6b9fff','#3a6fd8','#b8d0ff','#ffb8d0','#fff','#ffd6a5','#b8ffda','#ffc8f0'];
+    for(let i=0;i<80;i++){
+      const c=document.createElement('div'); c.className='conf';
+      const sz=rand(6,12);
+      c.style.cssText=`
+        left:${rand(0,100)}vw; top:-20px;
+        width:${sz}px; height:${sz}px;
+        background:${cc[rInt(0,cc.length)]};
+        border-radius:${Math.random()>.5?'50%':'2px'};
+        animation-duration:${rand(1.2,2.8)}s;
+        animation-delay:${rand(0,1.5)}s;`;
+      document.body.appendChild(c);
+      setTimeout(()=>c.remove(),4500);
+    }
+  }
+
+  /* ── TULIP SVG ── */
+  function makeTulip(color, h=110, w=36){
+    const P = color==='red'
+      ? ['#e8304a','#ff6680','#c01830']
+      : color==='blue'
+      ? ['#3a7bd5','#66a8ff','#1a4fa8']
+      : color==='pink'
+      ? ['#e8509a','#ff80c0','#c01860']
+      : ['#a040d5','#cc70ff','#7010a8']; // purple
+    const stem='#3a8c4a', leaf='#4aae5c';
+    return `<svg width="${w}" height="${h}" viewBox="0 0 36 110" xmlns="http://www.w3.org/2000/svg"
+      style="filter:drop-shadow(0 2px 8px ${P[0]}88)">
+      <path d="M18 108 Q16 85 18 60" stroke="${stem}" stroke-width="2.8" fill="none" stroke-linecap="round"/>
+      <path d="M17 82 Q6 74 5 62 Q12 68 17 75" fill="${leaf}" opacity=".9"/>
+      <path d="M19 76 Q30 68 31 56 Q24 63 19 70" fill="${leaf}" opacity=".9"/>
+      <ellipse cx="11" cy="42" rx="7" ry="16" fill="${P[0]}" transform="rotate(-18 11 42)"/>
+      <ellipse cx="25" cy="42" rx="7" ry="16" fill="${P[0]}" transform="rotate(18 25 42)"/>
+      <ellipse cx="18" cy="36" rx="7" ry="17" fill="${P[1]}"/>
+      <ellipse cx="10" cy="48" rx="6" ry="13" fill="${P[2]}" transform="rotate(-28 10 48)" opacity=".7"/>
+      <ellipse cx="26" cy="48" rx="6" ry="13" fill="${P[2]}" transform="rotate(28 26 48)" opacity=".7"/>
+      <ellipse cx="18" cy="32" rx="3.5" ry="6" fill="${P[1]}" opacity=".8"/>
+      <ellipse cx="18" cy="30" rx="1.5" ry="3" fill="rgba(255,255,255,.5)"/>
+    </svg>`;
+  }
+
+  /* ── BUILD GARDEN ── */
+  const TULIPS = [
+    {color:'red',   delay:0},
+    {color:'blue',  delay:150},
+    {color:'pink',  delay:300},
+    {color:'purple',delay:450},
+    {color:'red',   delay:100},
+    {color:'blue',  delay:250},
+    {color:'pink',  delay:50},
+    {color:'red',   delay:350},
+    {color:'purple',delay:200},
+    {color:'blue',  delay:400},
+    {color:'pink',  delay:130},
+    {color:'red',   delay:280},
+  ];
+
+  const garden = document.getElementById('garden');
+  TULIPS.forEach(t=>{
+    const w=document.createElement('div');
+    w.className='tulip-wrap';
+    w.innerHTML=makeTulip(t.color);
+    garden.appendChild(w);
+    setTimeout(()=>w.classList.add('bloom'), 600 + t.delay);
+  });
+
+  /* Confetti burst after tulips finish */
+  setTimeout(confetti, 1400);
+</script>
+</body>
+</html>
